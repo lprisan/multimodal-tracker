@@ -1,0 +1,6 @@
+# Android
+platforms/*
+
+# Plugins
+plugins/*
+node_modules/*

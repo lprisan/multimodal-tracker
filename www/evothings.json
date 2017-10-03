@@ -1,0 +1,47 @@
+{
+  "name": "classroom-tracker-new",
+  "version": "0.1",
+  "title": "Classroom Tracker",
+  "description": "App that scans for iBeacons, gets accelerometer and hopefully also geolocation data.",
+  "tags": [
+    {
+      "label": "ibeacon",
+      "type": "platform"
+    },
+    {
+      "label": "ble",
+      "type": "comm"
+    }
+  ],
+  "libraries": [
+    {
+      "name": "jquery",
+      "version": "2.1.1"
+    }
+  ],
+  "plugins": [
+    {
+      "name": "cordova-plugin-ibeacon",
+      "version": "3.4.3"
+    },
+    {
+      "name": "de.appplant.cordova.plugin.local-notification",
+      "version": "0.8.4"
+    },
+	  {
+      "name": "cordova-plugin-device-motion"
+    },
+    {
+      "name": "cordova-plugin-vibration"
+    },
+    {
+      "name": "cordova-plugin-file"
+    }
+  ],
+  "index-file": "index.html",
+  "uuid": "67b7e1d2-32b4-4980-af38-c4a02a8d6d88",
+  "icon": "app-icon.png",
+  "doc-url": "http://evothings.com/2.2/doc/examples/ibeacon-scan.html",
+  "long-description": "App that scans for iBeacons, gets accelerometer and hopefully also geolocation data.",
+  "cordova-id": "com.luispprieto.classroom-tracker"
+}
