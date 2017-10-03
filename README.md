@@ -3,13 +3,15 @@
 
 ## Commands run so far (may not be needed when checking the code out)
 
- cordova create multimodal-tracker com.luispprieto.multimodaltracker multimodal-tracker
- cordova platform add android --save
- cordova plugin add cordova-plugin-device --save
- cordova plugin add cordova-plugin-device-motion --save
- cordova plugin add cordova-plugin-ibeacon --save
- cordova plugin add cordova-plugin-file --save
- (... add more commands if other plugins are needed ...)
+```
+cordova create multimodal-tracker com.luispprieto.multimodaltracker multimodal-tracker
+cordova platform add android --save
+cordova plugin add cordova-plugin-device --save
+cordova plugin add cordova-plugin-device-motion --save
+cordova plugin add cordova-plugin-ibeacon --save
+cordova plugin add cordova-plugin-file --save
+(... add more commands if other plugins are needed ...)
+```
 
 ## Setting up
 
@@ -17,8 +19,9 @@ After you clone this repository, if you installed Evothings and Cordova and the 
 
 <!-- cordova prepare android ??-->
 
- cordova build android
-
+```
+cordova build android
+```
 Then, copy the generated .ipk to the phone/tablet (in multimodal-tracker\platforms\android\build\outputs\apk), and install it!
 
 ## Using the app
