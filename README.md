@@ -29,3 +29,5 @@ Then, copy the generated .ipk to the phone/tablet (in multimodal-tracker\platfor
 Basically, fire up the app (with bluetooth on) to detect the beacons and accelerometer. Once you click on the record button, the app will periodically write the log from the sensors to a file (normally, stored in /Android/data/com.luispprieto.multimodaltracker/files)
 
 The data itself is "almost-JSON": a succession of JSON arrays of objects, whose structure varies for the accelerometer and beacons samples.
+
+j
