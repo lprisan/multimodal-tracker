@@ -7,7 +7,7 @@ library(plyr)
 preprocessMultimodalTracker <- function(rawdatafilename){
 
   #For tests only
-  #rawdatafilename <- "C:\\Users\\lprisan\\workspace\\multimodal-tracker\\data\\multimodal-tracker-1507051956530.txt"
+  #rawdatafilename <- "./multimodal-tracker-1507051956530.txt"
   
   #TODO: extract the device ID from the filename, and add it as a column
   
@@ -17,12 +17,34 @@ preprocessMultimodalTracker <- function(rawdatafilename){
   lines <- gsub("[]", "", lines, fixed=T)
   lines <- gsub("][", ",", lines, fixed=T)
   # We parse the json
-  json_data <- fromJSON(lines)
-  #This gets us a sparse dataframe
-  #TODO: expand the beacon rows into multiple ones with beacon id and its data
+  json_data <- fromJSON(lines) #This gets us a dataframe of dataframes
+  
+  # Get the accelerometer data separately
+  acceleration <- json_data$acceleration[complete.cases(json_data$acceleration),]
+  acceleration <- unique(acceleration[,1:4]) # Remove duplicate values, just in case
+  acceleration <- acceleration[order(acceleration$timestamp),]
+  
+  # Get the beacons data separately
+  beacons <- data.frame()
+  if(!is.null(json_data$beacons) && length(json_data$beacons)>0){
+    for(beacon in json_data$beacons){
+      #print(summary(beacon))
+      if(nrow(beacons)==0){
+        beacons <- beacon[complete.cases(beacon),] 
+      }else{
+        beacons <- rbind(beacons,beacon[complete.cases(beacon),])
+      }
+    }
+  }
+  names(beacons)[8] <- "timestamp"
+  beacons <- unique(beacons[,1:8]) # Remove duplicate rows (beacon values apparently get repeated several times)  
+  beacons <- beacons[order(beacons$timestamp),]
 
-  #TODO: divide the whole dataframe in separate sources for different data streams
+  # Do a merged dataframe via the timestamp values
+  overall <- merge(acceleration,beacons,all = T)
+  overall <- overall[order(overall$timestamp),]
   
-  #TODO: return a list with the whole and separate dataframes
-  
+  # return a list with the whole and separate dataframes
+  data <- list(acceleration = acceleration, beacons = beacons, overall = overall)
+  data
 }

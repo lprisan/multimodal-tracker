@@ -1,0 +1,68 @@
+---
+title: "SampleReport"
+output: html_document
+abstract: "A sample report that uses the data pre-processing library to "
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, warning = F)
+
+library(ggplot2)
+library(data.table)
+
+source("./preprocessMultimodalTracker.R")
+```
+
+## Read the data
+
+
+```{r cars}
+# The data file(s)
+filename <- "./multimodal-tracker-1507051956530.txt"
+
+list <- preprocessMultimodalTracker(filename)
+
+accdata <- list$acceleration
+beacondata <- list$beacons
+
+```
+
+## Draw some plots
+
+Accelerometer X, Y, Z over time...
+
+```{r xyz, echo=FALSE}
+
+ggplot(accdata, aes(x=timestamp, colour="x")) + 
+  geom_line(aes(y = x, colour = "x"))+ 
+  geom_line(aes(y = y, colour = "y"))+ 
+  geom_line(aes(y = z, colour = "z"))+theme_minimal()+
+  ggtitle("Accelerometer X, Y, Z over time")
+
+
+```
+
+Total movement over time (calculated as the difference in all 3 axes to the previous value)
+
+```{r movement, echo=FALSE}
+
+accdata$diff <- sqrt((accdata$x-shift(accdata$x))^2+
+                   (accdata$y-shift(accdata$y))^2+
+                   (accdata$z-shift(accdata$z))^2)
+
+ggplot(accdata, aes(x=timestamp, y=diff))+geom_line()+theme_minimal()+
+  ggtitle("Total movement over time")
+
+
+```
+
+Distance (aprox.) to the beacons over time
+
+```{r beacons, echo=FALSE}
+
+ggplot(beacondata, aes(x=timestamp, y=rssi, colour=minor))+
+  geom_line()+theme_minimal()+
+  ggtitle("Beacon signal strength")
+
+
+```
