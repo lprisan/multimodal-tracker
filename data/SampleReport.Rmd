@@ -18,12 +18,14 @@ source("./preprocessMultimodalTracker.R")
 
 ```{r cars}
 # The data file(s)
-filename <- "./multimodal-tracker-1507051956530.txt"
+#filename <- "./multimodal-tracker-1507051956530.txt"
+filename <- "./multimodal-tracker-1507545914788.txt"
 
 list <- preprocessMultimodalTracker(filename)
 
 accdata <- list$acceleration
 beacondata <- list$beacons
+geodata <- list$geolocation
 
 ```
 
@@ -63,6 +65,24 @@ Distance (aprox.) to the beacons over time
 ggplot(beacondata, aes(x=timestamp, y=rssi, colour=minor))+
   geom_line()+theme_minimal()+
   ggtitle("Beacon signal strength")
+
+
+```
+
+And some geoposition data...
+
+```{r geo, echo=FALSE}
+
+#ggplot(geodata, aes(x=timestamp, y=latitude))+
+#  geom_line(aes(y = latitude, colour = "latitude"))+ 
+#  geom_line(aes(y = longitude, colour = "longitude"))+ 
+#  theme_minimal()+
+#  ggtitle("Lat/Long over time")
+
+ggplot(geodata, aes(x=longitude, y=latitude))+
+  geom_line()+ 
+  theme_minimal()+
+  ggtitle("Lat/Long over time")
 
 
 ```

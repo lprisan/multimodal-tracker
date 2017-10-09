@@ -8,7 +8,7 @@ preprocessMultimodalTracker <- function(rawdatafilename){
 
   #For tests only
   #rawdatafilename <- "./multimodal-tracker-1507051956530.txt"
-  
+  #rawdatafilename <- "./multimodal-tracker-1507545914788.txt"
   #TODO: extract the device ID from the filename, and add it as a column
   
   # Read the file  
@@ -40,11 +40,18 @@ preprocessMultimodalTracker <- function(rawdatafilename){
   beacons <- unique(beacons[,1:8]) # Remove duplicate rows (beacon values apparently get repeated several times)  
   beacons <- beacons[order(beacons$timestamp),]
 
+  # Get the geolocation data
+  geolocation <- json_data$geolocation[complete.cases(json_data$geolocation[,c("latitude","longitude")]),]
+  geolocation <- unique(geolocation[,1:8]) # Remove duplicate values, just in case
+  geolocation <- geolocation[order(geolocation$timestamp),]
+  
+  
   # Do a merged dataframe via the timestamp values
   overall <- merge(acceleration,beacons,all = T)
+  overall <- merge(overall,geolocation,all = T)
   overall <- overall[order(overall$timestamp),]
   
   # return a list with the whole and separate dataframes
-  data <- list(acceleration = acceleration, beacons = beacons, overall = overall)
+  data <- list(acceleration = acceleration, beacons = beacons, geolocation = geolocation, overall = overall)
   data
 }
