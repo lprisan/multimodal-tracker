@@ -10,6 +10,7 @@ cordova plugin add cordova-plugin-device --save
 cordova plugin add cordova-plugin-device-motion --save
 cordova plugin add cordova-plugin-ibeacon --save
 cordova plugin add cordova-plugin-file --save
+cordova plugin add cordova-plugin-geolocation --save
 (... add more commands if other plugins are needed ...)
 ```
 

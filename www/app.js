@@ -25,6 +25,7 @@ var lastWriteToFile = null;
 var secondsToLog = 10; //How many seconds to wait until the next writing to file of the data buffer
 var currentLogFile = null;
 var lastAccSample = null;
+var lastGeoSample = null;
 
 function startLogging(){
 	logging = true;
@@ -109,7 +110,7 @@ var app = (function()
 
 	// Timer that displays list of beacons.
 	var updateTimer = null;
-
+  var geolocationTimer = null;
 
 	app.initialize = function()
 	{
@@ -133,9 +134,32 @@ var app = (function()
 		//Initialize the internal file storage for the detailed logs
 		initializeFileLogging();
 
+		initializeGeolocation();
+
 		// Display refresh timer, every second
 		updateTimer = setInterval(displaySensorList, 1000);
 	}
+
+	function initializeGeolocation(){
+		console.log(navigator.geolocation); //Alternatively, we could use this other plugin: https://www.npmjs.com/package/cordova-plugin-locationservices
+		$("#textmsgs").append("initializing cordova geolocation "+navigator.geolocation);
+
+		function onSuccess(position)
+		{
+			geolocationHandler(position)
+		}
+
+		function onError(error)
+		{
+			console.log('Geolocation error: ' + error);
+		}
+
+		navigator.geolocation.watchPosition(
+			onSuccess,
+			onError,
+			{ timeout: 30000, enableHighAccuracy: true })
+	}
+
 
 	function initializeFileLogging(){
 		//$("#textmsgs").append("cordova file "+JSON.stringify(cordova.file));
@@ -172,6 +196,30 @@ var app = (function()
 				{ frequency: 50 })
 		}
 
+
+		// This gets called every time we sample the accelerometer
+		// Basically, add the last sample to the buffer array, to the "lastAccSample" (for later printing) and, if it passed enough time, also invoke the writing to file
+		function geolocationHandler(position)
+		{
+
+					if(logging){
+						//Add timestamp and log registers to the logging variable
+						var logEntry = {};
+						logEntry.geolocation = position;
+						logEntry.timestamp = Date.now();
+						dataBuffer.push(logEntry);
+
+						//If enough time has passed, we append the variable to the file
+						if(Date.now()>((secondsToLog*1000)+lastWriteToFile)){
+							var success = writeLog(JSON.stringify(dataBuffer));
+							if(success) dataBuffer = [];
+						}
+					}
+
+					lastGeoSample = position;
+
+
+		}
 
   // This gets called every time we sample the accelerometer
 	// Basically, add the last sample to the buffer array, to the "lastAccSample" (for later printing) and, if it passed enough time, also invoke the writing to file
@@ -297,6 +345,7 @@ var app = (function()
 		// Clear seonsor display list.
 		$('#found-beacons').empty();
 		$('#found-accelerometer').empty();
+		$('#found-geolocation').empty();
 
 		// Update the accelerometer data
 		if(lastAccSample){
@@ -308,6 +357,17 @@ var app = (function()
 				+ '</li>'
 			);
 			$('#found-accelerometer').append(element);
+		}
+
+		// Update the geolocation data
+		if(lastGeoSample){
+			var element = $(
+				'<li>'
+				+	'Lat: ' + lastGeoSample.coords.latitude + '<br />'
+				+	'Long: ' + lastGeoSample.coords.longitude + '<br />'
+				+ '</li>'
+			);
+			$('#found-geolocation').append(element);
 		}
 
 		// Update beacon list.
@@ -339,6 +399,8 @@ var app = (function()
 			}
 		});
 	}
+
+
 
 	return app;
 })();
