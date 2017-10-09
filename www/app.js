@@ -2,14 +2,17 @@
 $(document).ready(function() {
 	//alert("ready!");
 	$("#record").hide();
+	$("#recording").hide();
 	$("#stop").hide();
     $("#record").click(function(){
         $("#record").hide();
+				$("#recording").show();
         $("#stop").show();
         startLogging();
     });
     $("#stop").click(function(){
         $("#stop").hide();
+				$("#recording").hide();
         $("#record").show();
         stopLogging();
     });
@@ -142,7 +145,7 @@ var app = (function()
 
 	function initializeGeolocation(){
 		console.log(navigator.geolocation); //Alternatively, we could use this other plugin: https://www.npmjs.com/package/cordova-plugin-locationservices
-		$("#textmsgs").append("initializing cordova geolocation "+navigator.geolocation);
+		//$("#textmsgs").append("initializing cordova geolocation "+navigator.geolocation);
 
 		function onSuccess(position)
 		{
@@ -197,15 +200,24 @@ var app = (function()
 		}
 
 
-		// This gets called every time we sample the accelerometer
-		// Basically, add the last sample to the buffer array, to the "lastAccSample" (for later printing) and, if it passed enough time, also invoke the writing to file
+		// This gets called every time the position service updates position
+		// Basically, add the last sample to the buffer array, to the "lastGeoSample" (for later printing) and, if it passed enough time, also invoke the writing to file
 		function geolocationHandler(position)
 		{
-
 					if(logging){
+						//alert('Long '+JSON.stringify(position.coords.longitude)+'. Lat '+JSON.stringify(position.coords.latitude));
 						//Add timestamp and log registers to the logging variable
 						var logEntry = {};
-						logEntry.geolocation = position;
+						logEntry.geolocation = {
+							latitude: position.coords.latitude,
+							longitude: position.coords.longitude,
+							altitude: position.coords.altitude,
+							accuracy: position.coords.accuracy,
+							altitudeAccuracy: position.coords.altitudeAccuracy,
+							heading: position.coords.heading,
+							speed: position.coords.speed,
+							timestamp: position.timestamp
+						};
 						logEntry.timestamp = Date.now();
 						dataBuffer.push(logEntry);
 
@@ -215,7 +227,7 @@ var app = (function()
 							if(success) dataBuffer = [];
 						}
 					}
-
+					//$('#found-accelerometer').append("*");
 					lastGeoSample = position;
 
 
